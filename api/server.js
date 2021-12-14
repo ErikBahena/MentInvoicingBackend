@@ -33,7 +33,7 @@ server.use(
 );
 
 const authRouter = require("./auth/auth-router");
-const usersRouter = require("./users/users-router");
+const usersRouter = require("./user/users-router");
 
 server.use("/api/auth", authRouter);
 server.use("/api/users", usersRouter);

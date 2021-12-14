@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 
-const UsersModel = require("../users/users-model");
+const UsersModel = require("../user/users-model");
 
 const {
   checkPasswordLength,
@@ -21,7 +21,7 @@ router.post(
       password: bcrypt.hashSync(password, 10),
     };
 
-    const created = await UsersModel.add(newUser);
+    const created = await UsersModel.addUser(newUser);
 
     if (created)
       res

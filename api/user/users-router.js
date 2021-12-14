@@ -10,7 +10,7 @@ router.get("/:user_id", restricted, (req, res, next) => {
     .catch(next);
 });
 
-router.get("/:user_id/user_invoices", restricted, (req, res, next) => {
+router.get("/:user_id/invoices", (req, res, next) => {
   Users.getUserInvoices(req.params.user_id)
     .then((invoices) => res.status(200).json(invoices))
     .catch(next);

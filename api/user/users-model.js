@@ -19,7 +19,7 @@ async function findBy(filter) {
 }
 
 async function getUserInvoices(id) {
-  return await db("invoices").where("user_id", id);
+  return await db("invoices").where("user_id", id).first();
 }
 
 async function editUser(id, newData) {
