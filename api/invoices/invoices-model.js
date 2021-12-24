@@ -36,6 +36,8 @@ const getSaCaI = async (invoice) => {
   return invoice;
 };
 
+// when making gets, be sure they exist, and be sure they have all the seperate tables associated to them, if they don't then throw some type of error
+
 const getAll = async (user_id) => {
   const invoices = await db("invoices").where("user_id", user_id);
 
@@ -52,81 +54,81 @@ const getById = async (invoice_id) => {
   return await getSaCaI(invoice);
 };
 
-const add = async (user_id, potluck) => {
-  const potluckDetails = {
-    date: potluck.date,
-    time: potluck.time,
-    location: potluck.location,
-    title: potluck.title,
-    description: potluck.description,
-    createdBy: user_id,
-  };
+// const add = async (user_id, potluck) => {
+//   const potluckDetails = {
+//     date: potluck.date,
+//     time: potluck.time,
+//     location: potluck.location,
+//     title: potluck.title,
+//     description: potluck.description,
+//     createdBy: user_id,
+//   };
 
-  const [newPotluckId] = await db("potlucks as p")
-    .insert(potluckDetails)
-    .returning("p.potluck_id");
+//   const [newPotluckId] = await db("potlucks as p")
+//     .insert(potluckDetails)
+//     .returning("p.potluck_id");
 
-  if (potluck.invites.length > 0) {
-    const invites = potluck.invites;
+//   if (potluck.invites.length > 0) {
+//     const invites = potluck.invites;
 
-    for (const invite of invites) {
-      invite.potluck_id = newPotluckId;
+//     for (const invite of invites) {
+//       invite.potluck_id = newPotluckId;
 
-      await db("potluck_invites").insert(invite);
-    }
-  }
+//       await db("potluck_invites").insert(invite);
+//     }
+//   }
 
-  if (potluck.items.length > 0) {
-    const items = potluck.items;
+//   if (potluck.items.length > 0) {
+//     const items = potluck.items;
 
-    for (const item of items) {
-      item.potluck_id = newPotluckId;
+//     for (const item of items) {
+//       item.potluck_id = newPotluckId;
 
-      await db("potluck_items").insert(item);
-    }
-  }
+//       await db("potluck_items").insert(item);
+//     }
+//   }
 
-  return getAll(user_id);
-};
+//   return getAll(user_id);
+// };
 
-const update = async (potluck_id, potluck, user_id) => {
-  const potluckDetails = {
-    date: potluck.date,
-    time: potluck.time,
-    location: potluck.location,
-    title: potluck.title,
-    description: potluck.description,
-  };
+// const update = async (potluck_id, potluck, user_id) => {
+//   const potluckDetails = {
+//     date: potluck.date,
+//     time: potluck.time,
+//     location: potluck.location,
+//     title: potluck.title,
+//     description: potluck.description,
+//   };
 
-  await db("potlucks as p")
-    .where("p.potluck_id", potluck_id)
-    .update(potluckDetails);
+//   await db("potlucks as p")
+//     .where("p.potluck_id", potluck_id)
+//     .update(potluckDetails);
 
-  if (potluck.invites.length > 0) {
-    const invites = potluck.invites;
+//   if (potluck.invites.length > 0) {
+//     const invites = potluck.invites;
 
-    for (const invite of invites) {
-      await db("potluck_invites as pi")
-        .where("pi.invite_id", invite.invite_id)
-        .update(invite);
-    }
-  }
+//     for (const invite of invites) {
+//       await db("potluck_invites as pi")
+//         .where("pi.invite_id", invite.invite_id)
+//         .update(invite);
+//     }
+//   }
 
-  if (potluck.items.length > 0) {
-    const items = potluck.items;
+//   if (potluck.items.length > 0) {
+//     const items = potluck.items;
 
-    for (const item of items) {
-      await db("potluck_items as pi")
-        .where("pi.item_id", item.item_id)
-        .update(item);
-    }
-  }
+//     for (const item of items) {
+//       await db("potluck_items as pi")
+//         .where("pi.item_id", item.item_id)
+//         .update(item);
+//     }
+//   }
 
-  return getAll(user_id);
-};
+//   return getAll(user_id);
+// };
 
-const deletePotluck = async (potluck_id, user_id) => {
-  await db("potlucks as p").where("p.potluck_id", potluck_id).del();
+const deletePotluck = async (invoice_id, user_id) => {
+  await db("invoices as i").where("i.invoice_id", invoice_id).del();
 
   return getAll(user_id);
 };
