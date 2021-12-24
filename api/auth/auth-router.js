@@ -1,58 +1,44 @@
 const router = require("express").Router();
-const bcrypt = require("bcryptjs");
 
-const UsersModel = require("../user/users-model");
+const User = require("../user/users-model");
 
 const {
-  checkPasswordLength,
+  validateUserLogin,
+  validateUserRegister,
+  alreadyExistsInDb,
   checkUsernameExists,
-  checkUsernameFree,
+  validatePassword,
+  hashPassword,
 } = require("./auth-middleware");
 
 router.post(
   "/register",
-  checkPasswordLength,
-  checkUsernameFree,
-  async (req, res, next) => {
-    const { username, password } = req.body;
-
-    const newUser = {
-      username,
-      password: bcrypt.hashSync(password, 10),
-    };
-
-    const created = await UsersModel.addUser(newUser);
-
-    if (created)
-      res
-        .status(201)
-        .json({ username: created.username, user_id: created.user_id });
-    else next({ message: "could't register user" });
+  validateUserRegister,
+  alreadyExistsInDb,
+  hashPassword,
+  (req, res, next) => {
+    User.add(req.user)
+      .then((newUser) => {
+        newUser.token = req.token;
+        res.status(201).json(newUser);
+      })
+      .catch(next);
   }
 );
 
-router.post("/login", checkUsernameExists, (req, res, next) => {
-  const { username, password } = req.body;
-  // saves us from two trips to the database
-  const userFromDb = req.user;
-
-  const verified = bcrypt.compareSync(password, userFromDb.password);
-
-  if (!verified) return next({ status: 401, message: "Invalid credentials" });
-  else {
-    req.session.user = userFromDb;
-    res.status(200).json({ message: `welcome ${username}!` });
+router.post(
+  "/login",
+  validateUserLogin,
+  checkUsernameExists,
+  validatePassword,
+  (req, res, next) => {
+    res.status(200).json({
+      username: req.userFromDb.username,
+      email: req.userFromDb.email,
+      user_id: req.userFromDb.user_id,
+      token: req.token,
+    });
   }
-});
-
-router.get("/logout", (req, res, next) => {
-  req.session.user
-    ? req.session.destroy((err) => {
-        if (err) return next({ message: "cound't log you out" });
-
-        res.status(200).json({ message: "logged out" });
-      })
-    : res.status(200).json({ message: "no session" });
-});
+);
 
 module.exports = router;

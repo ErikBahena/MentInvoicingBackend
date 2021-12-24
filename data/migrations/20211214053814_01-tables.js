@@ -1,56 +1,25 @@
-/**
- * {
-      id: "RT3080",
-      createdAt: "2021-08-18",
-      paymentDue: "2021-08-19",
-      description: "Re-branding",
-      paymentTerms: 1,
-      clientName: "Jensen Huang",
-      clientEmail: "jensenh@mail.com",
-      status: "paid",
-      senderAddress: {
-        street: "19 Union Terrace",
-        city: "London",
-        postCode: "E1 3EZ",
-        country: "United Kingdom",
-      },
-      clientAddress: {
-        street: "106 Kendell Street",
-        city: "Sharrington",
-        postCode: "NR24 5WQ",
-        country: "United Kingdom",
-      },
-      items: [
-        {
-          name: "Brand Guidelines",
-          quantity: 1,
-          price: 1800.9,
-          total: 1800.9,
-        },
-      ],
-      total: 1800.9,
-    },
- */
-
 exports.up = function (knex) {
   return knex.schema
     .createTable("users", (users) => {
       users.increments("user_id");
-      users.string("username", 128).notNullable().unique();
+
+      users.string("username", 20).notNullable().unique();
       users.string("email", 50).notNullable().unique();
-      users.string("password", 128).notNullable();
+      users.string("password", 50).notNullable();
+
+      users.string("photo_url");
     })
     .createTable("invoices", (table) => {
-      table.increments("id");
+      table.increments("invoice_id");
       table.timestamp("createdAt").defaultTo(knex.fn.now()).notNullable();
 
-      table.timestamp("paymentDue");
-      table.string("description", 30).defaultTo("no description provided");
+      table.string("paymentDue");
+      table.string("description", 50).defaultTo("no description provided");
       table.integer("paymentTerms");
 
-      table.string("clientName", 20).defaultTo("no client name");
+      table.string("clientName", 50).defaultTo("no client name");
       table.string("clientEmail", 50).defaultTo("no client email");
-      table.string("status", 8).notNullable();
+      table.string("status", 8).defaultTo("draft");
 
       table
         .integer("user_id")
@@ -59,9 +28,61 @@ exports.up = function (knex) {
         .references("user_id")
         .inTable("users")
         .onDelete("CASCADE");
+    })
+    .createTable("sender_addresses", (table) => {
+      table.increments("sender_address_id");
+
+      table.string("street", 100);
+      table.string("city", 100);
+      table.string("postCode", 100);
+      table.string("country", 100);
+
+      table
+        .integer("invoice_id")
+        .unsigned()
+        .notNullable()
+        .references("invoice_id")
+        .inTable("invoices")
+        .onDelete("CASCADE");
+    })
+    .createTable("client_addresses", (table) => {
+      table.increments("client_address_id");
+
+      table.string("street", 100);
+      table.string("city", 100);
+      table.string("postCode", 100);
+      table.string("country", 100);
+
+      table
+        .integer("invoice_id")
+        .unsigned()
+        .notNullable()
+        .references("invoice_id")
+        .inTable("invoices")
+        .onDelete("CASCADE");
+    })
+    .createTable("items", (table) => {
+      table.increments("item_id");
+
+      table.string("name", 100).notNullable();
+      table.integer("quantity", 100).notNullable();
+      table.integer("price", 100).notNullable();
+
+      table
+        .integer("invoice_id")
+        .unsigned()
+        .notNullable()
+        .references("invoice_id")
+        .inTable("invoices")
+        .onDelete("CASCADE");
     });
 };
 
 exports.down = function (knex) {
-  return knex.schema.dropTableIfExists("users").dropTableIfExists("invoices");
+  return knex.schema
+    .dropTableIfExists("users")
+    .dropTableIfExists("invoices")
+    .dropTableIfExists("sender_addresses")
+    .dropTableIfExists("client_addresses")
+    .dropTableIfExists("items");
 };

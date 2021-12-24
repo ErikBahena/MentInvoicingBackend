@@ -4,10 +4,10 @@ async function addUser(user) {
   return await db("users").insert(user);
 }
 
-async function findById(id) {
+async function findById(user_id) {
   return await db("users")
     .select("user_id", "username", "email")
-    .where("user_id", id)
+    .where("user_id", user_id)
     .first();
 }
 
@@ -18,24 +18,19 @@ async function findBy(filter) {
     .first();
 }
 
-async function getUserInvoices(id) {
-  return await db("invoices").where("user_id", id).first();
+async function editUser(user_id, newData) {
+  return await db("users").update(newData).where("user_id", user_id);
 }
 
-async function editUser(id, newData) {
-  return await db("users").update(newData).where("user_id", id);
-}
-
-async function deleteUser(id) {
+async function deleteUser(user_id) {
   const deleted = await findById("user_id", id);
-  await db("users").where("user_id", id).del();
+  await db("users").where("user_id", user_id).del();
   return deleted;
 }
 
 module.exports = {
   addUser,
   findById,
-  getUserInvoices,
   editUser,
   deleteUser,
   findBy,
