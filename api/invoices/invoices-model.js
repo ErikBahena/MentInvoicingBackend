@@ -1,6 +1,6 @@
 const db = require("../../data/dbConfig");
 
-async function getSaCaI(invoice) {
+const getSaCaI = async (invoice) => {
   invoice.senderAddress = await db("sender_addresses as sa")
     .select(
       "sa.city",
@@ -34,7 +34,7 @@ async function getSaCaI(invoice) {
   invoice.total = sum;
 
   return invoice;
-}
+};
 
 const getAll = async (user_id) => {
   const invoices = await db("invoices").where("user_id", user_id);
