@@ -12,7 +12,7 @@ exports.up = function (knex) {
       table.increments("invoice_id");
       table.string("createdAt").defaultTo(knex.fn.now()).notNullable();
 
-      table.string("paymentDue");
+      table.string("paymentDue", 50);
       table.string("description", 50);
       table.integer("paymentTerms");
 
@@ -64,8 +64,8 @@ exports.up = function (knex) {
       table.increments("item_id");
 
       table.string("name", 100).notNullable();
-      table.integer("quantity", 100).notNullable();
-      table.integer("price", 100).notNullable();
+      table.decimal("quantity", 100).notNullable();
+      table.decimal("price", 100).notNullable();
 
       table
         .integer("invoice_id")
@@ -79,9 +79,9 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTableIfExists("users")
-    .dropTableIfExists("invoices")
-    .dropTableIfExists("sender_addresses")
+    .dropTableIfExists("items")
     .dropTableIfExists("client_addresses")
-    .dropTableIfExists("items");
+    .dropTableIfExists("sender_addresses")
+    .dropTableIfExists("invoices")
+    .dropTableIfExists("users");
 };
