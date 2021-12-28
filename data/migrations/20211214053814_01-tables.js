@@ -3,21 +3,21 @@ exports.up = function (knex) {
     .createTable("users", (users) => {
       users.increments("user_id");
 
-      users.string("email", 50).notNullable().unique();
-      users.string("password", 50).notNullable();
+      users.string("email").notNullable().unique();
+      users.string("password", 200).notNullable();
 
-      users.string("photo_url");
+      users.string("photo_url", 200);
     })
     .createTable("invoices", (table) => {
       table.increments("invoice_id");
       table.string("createdAt").defaultTo(knex.fn.now()).notNullable();
 
-      table.string("paymentDue", 50);
-      table.string("description", 50);
+      table.string("paymentDue", 200);
+      table.string("description", 200);
       table.integer("paymentTerms");
 
-      table.string("clientName", 50);
-      table.string("clientEmail", 50);
+      table.string("clientName", 200);
+      table.string("clientEmail", 200);
       table.string("status", 8);
 
       table

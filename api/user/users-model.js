@@ -1,9 +1,11 @@
 const db = require("../../data/dbConfig");
 
-async function addUser(user) {
-  const [newUserId] = await db("users").insert(user);
+async function addUser(newUser) {
+  const [createdUser] = await db("users")
+    .insert(newUser)
+    .returning(["user_id", "email", "photo_url"]);
 
-  return findById(newUserId);
+  return createdUser;
 }
 
 async function findById(user_id) {

@@ -63,12 +63,8 @@ const checkEmailExists = async (req, res, next) => {
 };
 
 const validatePassword = (req, res, next) => {
-  const { password } = req.body;
-
-  const userFromDb = req.userFromDb;
-
-  if (bcrypt.compareSync(password, userFromDb.password)) {
-    req.token = tokenBuilder(userFromDb);
+  if (bcrypt.compareSync(req.body.password, req.userFromDb.password)) {
+    req.token = tokenBuilder(req.userFromDb);
     next();
   } else next({ status: 401, message: "wrong password" });
 };
@@ -76,11 +72,11 @@ const validatePassword = (req, res, next) => {
 const hashPassword = (req, res, next) => {
   const user = req.body;
 
-  const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
-  user.password = hash;
+  user.password = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
 
   req.token = tokenBuilder(user);
   req.user = user;
+
   next();
 };
 

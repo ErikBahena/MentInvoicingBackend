@@ -36,6 +36,7 @@ router.post(
       username: req.userFromDb.username,
       email: req.userFromDb.email,
       user_id: req.userFromDb.user_id,
+      photo_url: req.userFromDb.photo_url,
       token: req.token,
     });
   }
