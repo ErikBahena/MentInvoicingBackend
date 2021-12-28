@@ -12,12 +12,12 @@ const validateUserLogin = (req, res, next) => {
   if (
     !user.password ||
     user.password.trim() === "" ||
-    !user.username ||
-    user.username.trim() === ""
+    !user.email ||
+    user.email.trim() === ""
   ) {
     return next({
       status: 400,
-      message: "username and password required",
+      message: "email and password required",
     });
   } else next();
 };
@@ -29,35 +29,33 @@ const validateUserRegister = (req, res, next) => {
     !user.password ||
     user.password.trim() === "" ||
     !user.email ||
-    user.email.trim() === "" ||
-    !user.username ||
-    user.username.trim() === ""
-  ) {
+    user.email.trim() === ""
+  )
     return next({
       status: 400,
-      message: "username, email and password required",
+      message: "email and password required",
     });
-  } else next();
+  else next();
 };
 
 const alreadyExistsInDb = async (req, res, next) => {
   const { email } = req.body;
 
-  const user = await User.getBy("email", email);
+  const user = await User.findBy("email", email);
 
   if (user) return next({ status: 400, message: "email already in use" });
   else next();
 };
 
-const checkUsernameExists = async (req, res, next) => {
-  const { username } = req.body;
+const checkEmailExists = async (req, res, next) => {
+  const { email } = req.body;
 
-  const user = await User.getBy("username", username);
+  const user = await User.findBy("email", email);
 
   if (!user)
     return next({
       status: 401,
-      message: "that username is not registered to any user",
+      message: "that email is not registered to any user",
     });
 
   req.userFromDb = user;
@@ -101,7 +99,7 @@ module.exports = {
   validateUserLogin,
   validateUserRegister,
   alreadyExistsInDb,
-  checkUsernameExists,
+  checkEmailExists,
   validatePassword,
   hashPassword,
   restricted,

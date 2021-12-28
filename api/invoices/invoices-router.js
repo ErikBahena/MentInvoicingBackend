@@ -17,12 +17,12 @@ router.get("/:invoice_id", (req, res, next) => {
     .catch(next);
 });
 
-// // create a new invoice
-// router.post("/:user_id", restricted, validateInvoice, (req, res, next) => {
-//   Invoices.add(req.params.user_id, req.body)
-//     .then((resp) => res.json(resp))
-//     .catch(next);
-// });
+// create a new invoice
+router.post("/:user_id", (req, res, next) => {
+  Invoices.add(req.params.user_id, req.body)
+    .then((resp) => res.json(resp))
+    .catch(next);
+});
 
 // // update a invoice
 // router.put("/:invoice_id", restricted, validateInvoice, (req, res, next) => {

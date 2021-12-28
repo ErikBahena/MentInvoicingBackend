@@ -3,7 +3,6 @@ exports.seed = function (knex) {
     {
       email: "erikjbahena@gmail.com",
       password: "1234",
-      username: "erik",
       user_id: 1,
     },
   ]);

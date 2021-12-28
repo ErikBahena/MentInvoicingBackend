@@ -6,7 +6,7 @@ const {
   validateUserLogin,
   validateUserRegister,
   alreadyExistsInDb,
-  checkUsernameExists,
+  checkEmailExists,
   validatePassword,
   hashPassword,
 } = require("./auth-middleware");
@@ -17,7 +17,7 @@ router.post(
   alreadyExistsInDb,
   hashPassword,
   (req, res, next) => {
-    User.add(req.user)
+    User.addUser(req.user)
       .then((newUser) => {
         newUser.token = req.token;
         res.status(201).json(newUser);
@@ -29,7 +29,7 @@ router.post(
 router.post(
   "/login",
   validateUserLogin,
-  checkUsernameExists,
+  checkEmailExists,
   validatePassword,
   (req, res, next) => {
     res.status(200).json({

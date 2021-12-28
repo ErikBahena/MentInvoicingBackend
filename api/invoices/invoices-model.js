@@ -54,42 +54,62 @@ const getById = async (invoice_id) => {
   return await getSaCaI(invoice);
 };
 
-// const add = async (user_id, potluck) => {
-//   const potluckDetails = {
-//     date: potluck.date,
-//     time: potluck.time,
-//     location: potluck.location,
-//     title: potluck.title,
-//     description: potluck.description,
-//     createdBy: user_id,
-//   };
+const add = async (user_id, invoice) => {
+  const invoiceDetails = {
+    createdAt: invoice.createdAt,
+    paymentDue: invoice.paymentDue,
+    description: invoice.description,
+    paymentTerms: invoice.paymentTerms,
+    clientName: invoice.clientName,
+    clientEmail: invoice.clientEmail,
+    status: invoice.status,
+    user_id: user_id,
+  };
 
-//   const [newPotluckId] = await db("potlucks as p")
-//     .insert(potluckDetails)
-//     .returning("p.potluck_id");
+  const [newInvoiceId] = await db("invoices as i")
+    .insert(invoiceDetails)
+    .returning("i.invoice_id");
 
-//   if (potluck.invites.length > 0) {
-//     const invites = potluck.invites;
+  if (invoice.items.length !== 0) {
+    for (const item of invoice.items) {
+      item.invoice_id = newInvoiceId;
+      await db("items").insert(item);
+    }
+  }
 
-//     for (const invite of invites) {
-//       invite.potluck_id = newPotluckId;
+  const newSenderAddress = {
+    street: invoice.senderAddress.street,
+    city: invoice.senderAddress.city,
+    postCode: invoice.senderAddress.postCode,
+    country: invoice.senderAddress.country,
+    invoice_id: newInvoiceId,
+  };
 
-//       await db("potluck_invites").insert(invite);
-//     }
-//   }
+  if (isAddressValid(newSenderAddress))
+    await db("sender_addresses").insert(newSenderAddress);
 
-//   if (potluck.items.length > 0) {
-//     const items = potluck.items;
+  const newClientAddress = {
+    street: invoice.clientAddress.street,
+    city: invoice.clientAddress.city,
+    postCode: invoice.clientAddress.postCode,
+    country: invoice.clientAddress.country,
+    invoice_id: newInvoiceId,
+  };
 
-//     for (const item of items) {
-//       item.potluck_id = newPotluckId;
+  if (isAddressValid(newClientAddress))
+    await db("client_addresses").insert(newClientAddress);
 
-//       await db("potluck_items").insert(item);
-//     }
-//   }
+  return getAll(user_id);
+};
 
-//   return getAll(user_id);
-// };
+const isAddressValid = (address) => {
+  const isValid = Object.values(address).every((value) => {
+    if (value === null || value === undefined || value === "") return false;
+    else return true;
+  });
+
+  return isValid;
+};
 
 // const update = async (potluck_id, potluck, user_id) => {
 //   const potluckDetails = {
@@ -133,4 +153,4 @@ const deletePotluck = async (invoice_id, user_id) => {
   return getAll(user_id);
 };
 
-module.exports = { getAll, getById, add, update, deletePotluck };
+module.exports = { getAll, getById, add, deletePotluck };

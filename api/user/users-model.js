@@ -1,20 +1,22 @@
 const db = require("../../data/dbConfig");
 
 async function addUser(user) {
-  return await db("users").insert(user);
+  const [newUserId] = await db("users").insert(user);
+
+  return findById(newUserId);
 }
 
 async function findById(user_id) {
   return await db("users")
-    .select("user_id", "username", "email")
+    .select("user_id", "photo_url", "email")
     .where("user_id", user_id)
     .first();
 }
 
-async function findBy(filter) {
-  return await db("invoices")
-    .select("user_id", "username", "password")
-    .where(filter)
+async function findBy(arg1, arg2) {
+  return await db("users")
+    .select("user_id", "email", "password", "photo_url")
+    .where(arg1, arg2)
     .first();
 }
 

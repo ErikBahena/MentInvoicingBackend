@@ -3,7 +3,6 @@ exports.up = function (knex) {
     .createTable("users", (users) => {
       users.increments("user_id");
 
-      users.string("username", 20).notNullable().unique();
       users.string("email", 50).notNullable().unique();
       users.string("password", 50).notNullable();
 
@@ -11,15 +10,15 @@ exports.up = function (knex) {
     })
     .createTable("invoices", (table) => {
       table.increments("invoice_id");
-      table.timestamp("createdAt").defaultTo(knex.fn.now()).notNullable();
+      table.string("createdAt").defaultTo(knex.fn.now()).notNullable();
 
       table.string("paymentDue");
-      table.string("description", 50).defaultTo("no description provided");
+      table.string("description", 50);
       table.integer("paymentTerms");
 
-      table.string("clientName", 50).defaultTo("no client name");
-      table.string("clientEmail", 50).defaultTo("no client email");
-      table.string("status", 8).defaultTo("draft");
+      table.string("clientName", 50);
+      table.string("clientEmail", 50);
+      table.string("status", 8);
 
       table
         .integer("user_id")
