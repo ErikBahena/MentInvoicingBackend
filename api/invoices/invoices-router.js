@@ -4,21 +4,21 @@ const { validateInvoice } = require("./invoices-middleware");
 const { restricted } = require("../auth/auth-middleware");
 
 // get all invoices
-router.get("/:user_id/invoices", (req, res, next) => {
+router.get("/:user_id/invoices", restricted, (req, res, next) => {
   Invoices.getAll(req.params.user_id)
     .then((resp) => res.json(resp))
     .catch(next);
 });
 
 // get a single invoice
-router.get("/:invoice_id", (req, res, next) => {
+router.get("/:invoice_id", restricted, (req, res, next) => {
   Invoices.getById(req.params.invoice_id)
     .then((resp) => res.json(resp))
     .catch(next);
 });
 
 // create a new invoice
-router.post("/:user_id", (req, res, next) => {
+router.post("/:user_id", restricted, (req, res, next) => {
   Invoices.add(req.params.user_id, req.body)
     .then((resp) => res.json(resp))
     .catch(next);

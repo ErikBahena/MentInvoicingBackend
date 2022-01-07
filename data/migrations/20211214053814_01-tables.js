@@ -14,7 +14,7 @@ exports.up = function (knex) {
 
       table.string("paymentDue", 200);
       table.string("description", 200);
-      table.integer("paymentTerms");
+      table.string("paymentTerms", 200);
 
       table.string("clientName", 200);
       table.string("clientEmail", 200);
